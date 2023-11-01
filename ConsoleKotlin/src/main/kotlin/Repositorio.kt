@@ -137,7 +137,7 @@ class Repositorio {
     fun ocorrencia(dado:String ,pc:Computador){
         val AppAberto = bd.queryForObject(
             """
-                select idProcesso from processosBloqueados where nome = '$dado' nd fkEmpresa = ${pc.fkempresa}
+                select idProcesso from processosBloqueados where nome = '$dado' and fkEmpresa = ${pc.fkempresa}
                 """, Int::class.java)
         bd.update(
             """
