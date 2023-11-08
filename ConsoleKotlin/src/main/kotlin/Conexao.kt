@@ -1,7 +1,5 @@
-import com.github.britooo.looca.api.core.Looca
 import org.apache.commons.dbcp2.BasicDataSource
 import org.springframework.jdbc.core.JdbcTemplate
-import java.util.*
 
 object Conexao {
     var bd: JdbcTemplate? = null

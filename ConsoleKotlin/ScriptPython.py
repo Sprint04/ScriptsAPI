@@ -14,12 +14,12 @@ def mysql_connection(host, user, passwd, database=None):
         database = database
     )
     return connection
-resposta = 'n'
+resposta = 's'
 if(resposta == "S" or resposta == "s"):
     maquina = '1'
-    cpuM = 'n'
-    memoriaM = 'n'
-    discoM = 'n'
+    cpuM = 's'
+    memoriaM = 's'
+    discoM = 's'
 
     if(cpuM == "S" or cpuM == "s"):
         cpuM = True

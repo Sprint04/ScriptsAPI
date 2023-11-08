@@ -57,7 +57,7 @@ fun sistema(bd:Repositorio, looca: Looca, ip:String){
                     var config = true
                     while(config){
                         println("""
-                            |Oque deseja monitorar?
+                            |O que deseja monitorar?
                             |1 - CPU (${if(aMonitorar.CPU) "Ativo" else "inativo"})
                             |2 - Memória (${if(aMonitorar.memoria) "Ativo" else "inativo"})
                             |3 - Disco (${if(aMonitorar.disco) "Ativo" else "inativo"})
@@ -89,7 +89,7 @@ fun sistema(bd:Repositorio, looca: Looca, ip:String){
 
                     var fks: Int
                     var dados: Double
-                    println("\n\rEstámos monitorando sua maquina.\n\r")
+                    println("\n\rEstamos monitorando sua máquina.\n\r")
                     val (arquivo1, arquivo2) = ScriptPython.criarPython(aMonitorar.python(), pc.idDispositivo, if(aMonitorar.CPU) "s" else "n", if(aMonitorar.memoria) "s" else "n", if(aMonitorar.disco) "s" else "n")
                     ScriptPython.executarScript(arquivo1,arquivo2)
                     Runtime.getRuntime().addShutdownHook(Thread {
@@ -109,24 +109,6 @@ fun sistema(bd:Repositorio, looca: Looca, ip:String){
                                 dados = (looca.grupoDeJanelas.totalJanelas).toDouble()
                                 println("$dados Janelas abertas")
                                 bd.monitoramento(dados, fks, pc)
-                            }
-                            if (aMonitorar.processo) {
-                                val processos = looca.grupoDeProcessos.processos
-
-                                processos.forEach {
-                                    if (it.nome.lowercase() == "idea64") {
-                                        println(
-                                            """
-                                  Nome: ${it.nome}
-                                  Pid: ${it.pid}
-                                  CPU utilizada: ${"%.1f".format(it.usoCpu)}%
-                                  Memoria usada: ${it.bytesUtilizados / 1000000} MB
-                                  
-                                  """.trimIndent()
-                                        )
-                                        bd.ocorrencia(it.nome, pc)
-                                    }
-                                }
                             }
                             if (aMonitorar.rede) {
                                 fks = 6
