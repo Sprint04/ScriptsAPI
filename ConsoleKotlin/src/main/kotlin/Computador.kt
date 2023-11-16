@@ -4,6 +4,6 @@ class Computador {
     var sistemaOperacional:String = ""
     var ip:String = ""
     var fkempresa:Int = 0
-
+    var mac:String = getMac()
 
 }

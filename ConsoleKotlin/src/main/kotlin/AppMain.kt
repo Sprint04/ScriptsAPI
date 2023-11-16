@@ -6,11 +6,11 @@ fun main() {
 
     bd.iniciar()
 
-    val ip = looca.rede.parametros.hostName
-    val token = bd.validarDispositivo(ip)
+    val mac = getMac()
+    val token = bd.validarDispositivo(mac)
     if(token){
-        sistema(bd, looca, ip)
+        sistema(bd, looca, mac)
     } else{
-        cadastro(bd, looca, ip)
+        cadastro(bd, looca, mac)
     }
 }

@@ -1,12 +1,12 @@
 import com.github.britooo.looca.api.core.Looca
 import java.util.*
 
-fun sistema(bd:Repositorio, looca: Looca, ip:String){
+fun sistema(bd:Repositorio, looca: Looca, mac:String){
 
     val sistema = Sistema()
     val sn = Scanner(System.`in`)
 
-    val comp:List<Computador> = bd.computador(ip)
+    val comp:List<Computador> = bd.computador(mac)
 
     val pc = comp[0]
     println("Credenciais verificadas, Iniciando programa!")
@@ -64,8 +64,7 @@ fun sistema(bd:Repositorio, looca: Looca, ip:String){
                             |4 - USB (${if(aMonitorar.USB) "Ativo" else "inativo"})
                             |5 - Janelas (${if(aMonitorar.janelas) "Ativo" else "inativo"})
                             |6 - Rede (${if(aMonitorar.rede) "Ativo" else "inativo"})
-                            |7 - Processos (${if(aMonitorar.processo) "Ativo" else "inativo"})
-                            |8 - Confirmar
+                            |7 - Confirmar
                         """.trimMargin())
                         var i = sn.next().toInt()
                         when(i){
@@ -78,9 +77,7 @@ fun sistema(bd:Repositorio, looca: Looca, ip:String){
                                     else println("\n\rSeu plano não comporta esse Monitoramento")
                             6 -> if(plano[2].permissao) if(aMonitorar.rede) aMonitorar.rede = false else aMonitorar.rede = true
                                     else println("\n\rSeu plano não comporta esse Monitoramento")
-                            7 -> if(plano[1].permissao) if(aMonitorar.processo) aMonitorar.processo = false else aMonitorar.processo = true
-                                    else println("\n\rSeu plano não comporta esse Monitoramento")
-                            8 -> config = false
+                            7 -> config = false
                         }
 
                     }

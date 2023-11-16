@@ -1,7 +1,7 @@
 import com.github.britooo.looca.api.core.Looca
 import java.util.*
 
-fun cadastro(bd:Repositorio, looca:Looca, ip:String){
+fun cadastro(bd:Repositorio, looca:Looca, mac:String){
 
     val sn = Scanner(System.`in`)
 
@@ -27,11 +27,11 @@ fun cadastro(bd:Repositorio, looca:Looca, ip:String){
                 Thread.sleep(2000)
                 pc.idDispositivo = qtd + 1
                 pc.sistemaOperacional = looca.sistema.sistemaOperacional
-                pc.ip = ip
+                pc.ip = mac
                 pc.fkempresa = empresa[0].id
 
                 bd.cadastrarDispostivo(pc)
-                val comp:List<Computador> = bd.computador(ip)
+                val comp:List<Computador> = bd.computador(mac)
                 val pc = comp[0]
                 Conexao.insertComponentes(pc)
                 Thread.sleep(2000)
