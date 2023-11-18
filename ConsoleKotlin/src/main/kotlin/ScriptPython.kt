@@ -1,19 +1,27 @@
 import java.io.File
+import Conexao
+import SLQserver
 
 object ScriptPython {
 
     var PythonExe: List<Process> = listOf()
 
-    val host = "localhost"
-    val user = "testes"
-    val passwd = "12345678"
-    val database = "trackware"
+
+    val host = SLQserver.serverName
+    val user = SLQserver.username
+    val passwd = SLQserver.password
+    val database = SLQserver.mydatabase
+    val host2 = Conexao.serverName
+    val user2 = Conexao.username
+    val passwd2 = Conexao.password
+    val database2 = Conexao.mydatabase
 
     fun criarPython(python:String, maquina:Int, cpu:String, disk:String, memoria:String): Pair<String, String> {
 
             val pythonGeral = """
 from mysql.connector import connect
 import psutil
+import pymssql
 import time
 import datetime
 import platform
@@ -28,6 +36,28 @@ def mysql_connection(host, user, passwd, database=None):
         database = database
     )
     return connection
+    
+import pymssql
+
+def monitoramento(dado, componente_janela, pc):
+    try:
+        conn = pymssql.connect(server='$host', user='$user', password='$passwd', database='$database')
+        cursor = conn.cursor()
+        query = "INSERT INTO monitoramento (dadoCapturado, fkComponente, fkDispositivo) VALUES ({dado}, {componente_janela}, {pc.idDispositivo})" 
+        cursor.execute(query)
+        conn.commit()
+        
+    except pymssql.Error as ex:
+        connection = mysql_connection('$host2', '$user2', '$passwd2', '$database2')
+        query = '''
+            INSERT INTO monitoramento(dadoCapturado, fkComponente, fkDispositivo) VALUES
+                (
+        '''
+        dados = dado + ',' + componente_janela + ',' + pc + " )"
+        cursor = connection.cursor()
+        cursor.execute(query+dados)
+        connection.commit()
+
 resposta = '$python'
 if(resposta == "S" or resposta == "s"):
     maquina = '$maquina'
@@ -62,8 +92,6 @@ if(resposta == "S" or resposta == "s"):
  
         info = psutil.disk_partitions()
 
-        connection = mysql_connection('$host', '$user', '$passwd', '$database')
-
         cpu = str(cpu)
         mem = str(mem_used)
         disk = str(disk)
@@ -72,35 +100,25 @@ if(resposta == "S" or resposta == "s"):
         c = str(1)
         m = str(2)
         d = str(3)
-        query = '''
-            INSERT INTO monitoramento(dadoCapturado, fkComponente, fkDispositivo) VALUES
-                (
-        '''
-        
-        dados = disk + ',' + d + ',' + maquina + " )"
-        dados2 = cpu + ',' + c + ',' + maquina + " )"
-        dados3 = mem + ',' + m + ',' + maquina + " )"
 
-        cursor = connection.cursor()
         if(discoM == True):
-            cursor.execute(query+dados)
-            connection.commit()
+            monitoramento(disk, d, maquina)
         if(cpuM == True):
-            cursor.execute(query+dados2)
-            connection.commit()
+            monitoramento(cpu, c, maquina)
         if(memoriaM == True):
-            cursor.execute(query+dados3)
-            connection.commit()
+            monitoramento(mem, m, maquina)
 
         time.sleep(5)
 
 
     connection.close()
+    conn.close()
 
     """.trimIndent()
 
             val pythonAlerta = """
 from mysql.connector import connect
+import pymssql
 import psutil
 import time
 import datetime
@@ -120,15 +138,21 @@ def mysql_connection(host, user, passwd, database=None):
 
 connection = mysql_connection('$host', '$user', '$passwd', '$database')
 
-def read_query(connection, query):
-    cursor = connection.cursor()
-    result = None
+def read_query(query):
     try:
+        conn = pymssql.connect(server='$host', user='$user', password='$passwd', database='$database')
+        cursor = conn.cursor()
+        result = None
         cursor.execute(query)
         result = cursor.fetchall()
         return result
     except Error as err:
-        print(f"Error: '{err}'")
+        connection = mysql_connection('$host2', '$user2', '$passwd2', '$database2')
+        cursor = connection.cursor()
+        result = None
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return result
 
 corpo = ""${'"'}
     <!DOCTYPE html>
@@ -214,7 +238,7 @@ while(True):
     redeRQuery = "select dadoCapturado from monitoramento where fkDispositivo = " + maquina + " and fkComponente = (select idTipoComponente from tipoComponente where nome = 'Rede(recebida)') order by idDado desc limit 1;"
     redeEQuery = "select dadoCapturado from monitoramento where fkDispositivo = " + maquina + " and fkComponente = (select idTipoComponente from tipoComponente where nome = 'Rede(enviada)') order by idDado desc limit 1;"
         
-    cpu = read_query(connection,cpuQuery)
+    cpu = read_query(cpuQuery)
     if (len(cpu) > 0):
         for cp in cpu:
             cpu = cp
@@ -222,7 +246,7 @@ while(True):
         cpu = float(cpu)
         cpuAlert = True
         
-    disk = read_query(connection,diskQuery)
+    disk = read_query(diskQuery)
     if (len(disk) > 0):
         for dis in disk:
             disk = dis
@@ -230,7 +254,7 @@ while(True):
         disk = float(disk)
         diskAlert = True
         
-    memory = read_query(connection,memoryQuery)
+    memory = read_query(memoryQuery)
     if (len(memory) > 0):
         for mem in memory:
             memory = mem
@@ -238,7 +262,7 @@ while(True):
         memory = float(memory)
         memoryAlert = True
 
-    usb = read_query(connection,usbQuery)
+    usb = read_query(usbQuery)
     if (len(usb) > 0):
         for us in usb:
             usb = us
@@ -246,7 +270,7 @@ while(True):
         usb = float(usb)
         usbAlert = True
         
-    janela = read_query(connection,janelaQuery)
+    janela = read_query(janelaQuery)
     if (len(janela) > 0):
         for jan in janela:
             janela = jan
@@ -254,7 +278,7 @@ while(True):
         janela = float(janela)
         janelaAlert = True
         
-    redeR = read_query(connection,redeRQuery)
+    redeR = read_query(redeRQuery)
     if (len(redeR) > 0):
         for rr in redeR:
             redeR = rr
@@ -262,7 +286,7 @@ while(True):
         redeR = float(redeR)
         redeRAlert = True
         
-    redeE = read_query(connection,redeEQuery)
+    redeE = read_query(redeEQuery)
     if (len(redeE) > 0):
         for re in redeE:
             redeE = re

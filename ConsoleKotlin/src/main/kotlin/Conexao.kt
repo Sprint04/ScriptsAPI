@@ -2,16 +2,20 @@ import org.apache.commons.dbcp2.BasicDataSource
 import org.springframework.jdbc.core.JdbcTemplate
 
 object Conexao {
+    var serverName = "localhost"
+    var mydatabase = "trackware"
+    var username = "testes"
+    var password = "12345678"
     var bd: JdbcTemplate? = null
         get() {
             if (field == null){
                 val dataSource = BasicDataSource()
                 dataSource.driverClassName = "com.mysql.cj.jdbc.Driver"
-                val serverName = "localhost"
-                val mydatabase = "trackware"
+                val serverName = this.serverName
+                val mydatabase = this.mydatabase
                 dataSource.url = "jdbc:mysql://$serverName/$mydatabase"
-                dataSource.username = "testes"
-                dataSource.password = "12345678"
+                dataSource.username = this.username
+                dataSource.password = this.password
                 val bd = JdbcTemplate(dataSource)
                 field = bd
             }

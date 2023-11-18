@@ -1,4 +1,5 @@
 from mysql.connector import connect
+import pymssql
 import psutil
 import time
 import datetime
@@ -16,17 +17,23 @@ def mysql_connection(host, user, passwd, database=None):
     )
     return connection
 
-connection = mysql_connection('localhost', 'testes', '12345678', 'trackware')
+connection = mysql_connection('localhost', 'sa', '#Gfsptech', 'trackware')
 
-def read_query(connection, query):
-    cursor = connection.cursor()
-    result = None
+def read_query(query):
     try:
+        conn = pymssql.connect(server='localhost', user='sa', password='#Gfsptech', database='trackware')
+        cursor = conn.cursor()
+        result = None
         cursor.execute(query)
         result = cursor.fetchall()
         return result
     except Error as err:
-        print(f"Error: '{err}'")
+        connection = mysql_connection('localhost', 'testes', '12345678', 'trackware')
+        cursor = connection.cursor()
+        result = None
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return result
 
 corpo = """
     <!DOCTYPE html>
@@ -97,7 +104,7 @@ def enviar_email(corpo, componente):
     s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))    
         
  # -----------------------------------------------------------------------------------------------------------------------------------
-maquina = str(1)
+maquina = str(2)
 cpuAlert = False
 diskAlert = False
 memoryAlert = False
@@ -112,7 +119,7 @@ while(True):
     redeRQuery = "select dadoCapturado from monitoramento where fkDispositivo = " + maquina + " and fkComponente = (select idTipoComponente from tipoComponente where nome = 'Rede(recebida)') order by idDado desc limit 1;"
     redeEQuery = "select dadoCapturado from monitoramento where fkDispositivo = " + maquina + " and fkComponente = (select idTipoComponente from tipoComponente where nome = 'Rede(enviada)') order by idDado desc limit 1;"
         
-    cpu = read_query(connection,cpuQuery)
+    cpu = read_query(cpuQuery)
     if (len(cpu) > 0):
         for cp in cpu:
             cpu = cp
@@ -120,7 +127,7 @@ while(True):
         cpu = float(cpu)
         cpuAlert = True
         
-    disk = read_query(connection,diskQuery)
+    disk = read_query(diskQuery)
     if (len(disk) > 0):
         for dis in disk:
             disk = dis
@@ -128,7 +135,7 @@ while(True):
         disk = float(disk)
         diskAlert = True
         
-    memory = read_query(connection,memoryQuery)
+    memory = read_query(memoryQuery)
     if (len(memory) > 0):
         for mem in memory:
             memory = mem
@@ -136,7 +143,7 @@ while(True):
         memory = float(memory)
         memoryAlert = True
 
-    usb = read_query(connection,usbQuery)
+    usb = read_query(usbQuery)
     if (len(usb) > 0):
         for us in usb:
             usb = us
@@ -144,7 +151,7 @@ while(True):
         usb = float(usb)
         usbAlert = True
         
-    janela = read_query(connection,janelaQuery)
+    janela = read_query(janelaQuery)
     if (len(janela) > 0):
         for jan in janela:
             janela = jan
@@ -152,7 +159,7 @@ while(True):
         janela = float(janela)
         janelaAlert = True
         
-    redeR = read_query(connection,redeRQuery)
+    redeR = read_query(redeRQuery)
     if (len(redeR) > 0):
         for rr in redeR:
             redeR = rr
@@ -160,7 +167,7 @@ while(True):
         redeR = float(redeR)
         redeRAlert = True
         
-    redeE = read_query(connection,redeEQuery)
+    redeE = read_query(redeEQuery)
     if (len(redeE) > 0):
         for re in redeE:
             redeE = re

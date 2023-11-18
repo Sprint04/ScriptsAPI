@@ -1,5 +1,6 @@
 from mysql.connector import connect
 import psutil
+import pymssql
 import time
 import datetime
 import platform
@@ -14,9 +15,31 @@ def mysql_connection(host, user, passwd, database=None):
         database = database
     )
     return connection
+    
+import pymssql
+
+def monitoramento(dado, componente_janela, pc):
+    try:
+        conn = pymssql.connect(server='localhost', user='sa', password='#Gfsptech', database='trackware')
+        cursor = conn.cursor()
+        query = "INSERT INTO monitoramento (dadoCapturado, fkComponente, fkDispositivo) VALUES ({dado}, {componente_janela}, {pc.idDispositivo})" 
+        cursor.execute(query)
+        conn.commit()
+        
+    except pymssql.Error as ex:
+        connection = mysql_connection('localhost', 'testes', '12345678', 'trackware')
+        query = '''
+            INSERT INTO monitoramento(dadoCapturado, fkComponente, fkDispositivo) VALUES
+                (
+        '''
+        dados = dado + ',' + componente_janela + ',' + pc + " )"
+        cursor = connection.cursor()
+        cursor.execute(query+dados)
+        connection.commit()
+
 resposta = 's'
 if(resposta == "S" or resposta == "s"):
-    maquina = '1'
+    maquina = '2'
     cpuM = 's'
     memoriaM = 's'
     discoM = 's'
@@ -48,8 +71,6 @@ if(resposta == "S" or resposta == "s"):
  
         info = psutil.disk_partitions()
 
-        connection = mysql_connection('localhost', 'testes', '12345678', 'trackware')
-
         cpu = str(cpu)
         mem = str(mem_used)
         disk = str(disk)
@@ -58,27 +79,16 @@ if(resposta == "S" or resposta == "s"):
         c = str(1)
         m = str(2)
         d = str(3)
-        query = '''
-            INSERT INTO monitoramento(dadoCapturado, fkComponente, fkDispositivo) VALUES
-                (
-        '''
-        
-        dados = disk + ',' + d + ',' + maquina + " )"
-        dados2 = cpu + ',' + c + ',' + maquina + " )"
-        dados3 = mem + ',' + m + ',' + maquina + " )"
 
-        cursor = connection.cursor()
         if(discoM == True):
-            cursor.execute(query+dados)
-            connection.commit()
+            monitoramento(disk, d, maquina)
         if(cpuM == True):
-            cursor.execute(query+dados2)
-            connection.commit()
+            monitoramento(cpu, c, maquina)
         if(memoriaM == True):
-            cursor.execute(query+dados3)
-            connection.commit()
+            monitoramento(mem, m, maquina)
 
         time.sleep(5)
 
 
     connection.close()
+    conn.close()
