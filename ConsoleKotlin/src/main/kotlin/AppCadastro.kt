@@ -33,7 +33,12 @@ fun cadastro(bd:Repositorio, looca:Looca, mac:String){
                 bd.cadastrarDispostivo(pc)
                 val comp:List<Computador> = bd.computador(mac)
                 val pc = comp[0]
-                Conexao.insertComponentes(pc)
+                try {
+                    SLQserver.insertComponentes(pc)
+                    Conexao.insertComponentes(pc)
+                } catch (exception:Exception){
+                    Conexao.insertComponentes(pc)
+                }
                 Thread.sleep(2000)
                 main()
             }

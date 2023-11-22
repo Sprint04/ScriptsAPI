@@ -23,10 +23,10 @@ class Repositorio {
                 BeanPropertyRowMapper(Token::class.java)
             )
             if (tk.isNotEmpty()){
-
                 return true
+            } else {
+                return false
             }
-            throw RuntimeException()
         }catch(exception:Exception) {
             tk = bd.query(
                 """
@@ -98,8 +98,14 @@ class Repositorio {
         try {
             val cadastro = server.update(
                 """
-            insert into dispositivo values
-            (${pc.idDispositivo}, '${pc.sistemaOperacional}', '${pc.ip}', ${pc.fkempresa})
+            insert into dispositivo(sistema_Operacional,IP,fkEmpresa) values
+            ('${pc.sistemaOperacional}', '${pc.ip}', ${pc.fkempresa})
+            """
+            )
+            bd.update(
+                """
+            insert into dispositivo(sistema_Operacional,IP,fkEmpresa) values
+            ('${pc.sistemaOperacional}', '${pc.ip}', ${pc.fkempresa})
             """
             )
             if (cadastro == 1) {
@@ -109,8 +115,8 @@ class Repositorio {
         } catch (exception:Exception){
             val cadastro = bd.update(
                 """
-            insert into dispositivo values
-            (${pc.idDispositivo}, '${pc.sistemaOperacional}', '${pc.ip}', ${pc.fkempresa})
+            insert into dispositivo(sistema_Operacional,IP,fkEmpresa) values
+            ('${pc.sistemaOperacional}', '${pc.ip}', ${pc.fkempresa})
             """
             )
             if (cadastro == 1) {
@@ -171,14 +177,14 @@ class Repositorio {
         try {
             server.execute(
                 """
-            insert into acesso(fkUsuario, fkDispositivo, fkLog) value
+            insert into acesso(fkUsuario, fkDispositivo, fkLog) values
             (${sistema.idUser}, ${pc.idDispositivo}, 1)
             """
             )
         } catch (exception:Exception) {
             bd.execute(
                 """
-            insert into acesso(fkUsuario, fkDispositivo, fkLog) value
+            insert into acesso(fkUsuario, fkDispositivo, fkLog) values
             (${sistema.idUser}, ${pc.idDispositivo}, 1)
             """
             )
@@ -193,6 +199,8 @@ class Repositorio {
             """
             )
         } catch(exception:Exception) {
+            println("deu errado")
+            println(exception)
             bd.update(
                 """
             insert into monitoramento(dadoCapturado,fkComponente,fkDispositivo) values
