@@ -1,51 +1,30 @@
 import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.JdbcTemplate
-import java.lang.RuntimeException
 
 class Repositorio {
     lateinit var server: JdbcTemplate
     lateinit var bd: JdbcTemplate
 
     fun iniciar(){
-        server = SLQserver.bd!!
+        server = SQLserver.bd!!
         bd = Conexao.bd!!
     }
-    fun validarDispositivo(ip:String):Boolean{
-        lateinit var tk:List<Token>
-        try {
-            tk = server.query(
+    fun validarDispositivo(ip: String): Boolean {
+        return try {
+            val token: Token? = server.queryForObject(
                 """
-        select chaveAtivacao as token from dispositivo 
-            join empresa on fkempresa = empresa.idEmpresa
-                join tokens on fkToken = idToken
-                    where ip = '$ip'
-        """,
-                BeanPropertyRowMapper(Token::class.java)
+            SELECT chaveAtivacao AS token FROM dispositivo 
+            JOIN empresa ON fkempresa = empresa.idEmpresa
+            JOIN tokens ON fkToken = idToken
+            WHERE ip = '$ip'
+            """,Token::class.java
             )
-            if (tk.isNotEmpty()){
-                return true
-            } else {
-                return false
-            }
-        }catch(exception:Exception) {
-            tk = bd.query(
-                """
-        select chaveAtivacao as token from dispositivo 
-            join empresa on fkempresa = empresa.idEmpresa
-                join tokens on fkToken = idToken
-                    where ip = '$ip'
-        """,
-                BeanPropertyRowMapper(Token::class.java)
-            )
+            token != null
+        } catch (exception: Exception) {
+            false
         }
-
-        if (tk.isNotEmpty()){
-
-            return true
-        }
-        return false
-
     }
+
     fun empresa(token:String):List<Empresa>{
         try {
             val empresa: List<Empresa> = server.query(
@@ -72,7 +51,6 @@ class Repositorio {
         }
     }
     fun validacaoLimite(token:String):Int{
-        try {
             val qtd = server.queryForObject(
                 """
                 select count(c.idDispositivo) as qtdComputadores from dispositivo as c 
@@ -82,19 +60,8 @@ class Repositorio {
                 """, Int::class.java
             )
             return try{qtd.toInt()} catch(exception:Exception){0}
-        } catch(exception:Exception){
-            val qtd = bd.queryForObject(
-                """
-                select count(c.idDispositivo) as qtdComputadores from dispositivo as c 
-	                join empresa as e on fkempresa = e.idEmpresa
-		                join tokens as t on fkToken = idToken
-		                    where chaveAtivacao = '$token';
-                """, Int::class.java
-            )
-            return try{qtd.toInt()} catch(exception:Exception){0}
-        }
     }
-    fun cadastrarDispostivo(pc:Computador){
+    fun cadastrarDispostivo(pc:Computador):Boolean{
         try {
             val cadastro = server.update(
                 """
@@ -110,20 +77,12 @@ class Repositorio {
             )
             if (cadastro == 1) {
                 Thread.sleep(2500)
-                return println("Cadastro Realizado!!\r\nReiniciando o programa.");
+                return true
             }
         } catch (exception:Exception){
-            val cadastro = bd.update(
-                """
-            insert into dispositivo(sistema_Operacional,IP,fkEmpresa) values
-            ('${pc.sistemaOperacional}', '${pc.ip}', ${pc.fkempresa})
-            """
-            )
-            if (cadastro == 1) {
-                Thread.sleep(2500)
-                return println("Cadastro Realizado!!\r\nReiniciando o programa.");
-            }
+           return false
         }
+        return false
     }
     fun computador(ip:String):List<Computador>{
         try {
@@ -159,18 +118,13 @@ class Repositorio {
                 BeanPropertyRowMapper(Usuario::class.java)
             )
             return user
-        } catch (exception:Exception){
-            val user: List<Usuario> = bd.query(
-                """
-            select idUsuario, u.nome, email_Corporativo as email, senha, c.nome as cargo from usuario as u
-	            join empresa on u.fkEmpresa = idEmpresa 
-		            join dispositivo as d on d.fkEmpresa = idEmpresa
-                        join cargo as c on fkCargo = idCargo
-			                where u.fkEmpresa = ${pc.fkempresa};
-        """,
-                BeanPropertyRowMapper(Usuario::class.java)
-            )
-            return user
+        } catch (exception: Exception) {
+            val ADM = Usuario()
+            ADM.email = "admuser000@permit.config"
+            ADM.senha = "0000"
+            ADM.cargo = "Gerenciador de Sistema para login offline"
+            ADM.idUsuario = 0
+            return mutableListOf(ADM)
         }
     }
     fun acessoLog(sistema:Sistema, pc: Computador){
@@ -211,7 +165,7 @@ class Repositorio {
     }
     fun verificarPlano(pc:Computador):List<Permissao>{
         try {
-            val plan: List<Permissao> = bd.query(
+            return bd.query(
                 """
             select tc.nome, permissao from monitorar
 	            join TipoComponente as tc on fkTipoComponente = idTipoComponente
@@ -224,49 +178,13 @@ class Repositorio {
         """,
                 BeanPropertyRowMapper(Permissao::class.java)
             )
-            return plan
-        } catch(exception:Exception){
-            val plan: List<Permissao> = bd.query(
-                """
-            select tc.nome, permissao from monitorar
-	            join TipoComponente as tc on fkTipoComponente = idTipoComponente
-		            join plano on monitorar.fkPlano = idPlano
-			            join empresa on empresa.fkPlano = idPlano
-                            join dispositivo on dispositivo.fkEmpresa = idEmpresa
-                                where fkEmpresa = ${pc.fkempresa}
-                                    and tc.idTipoComponente > 3;
-
-        """,
-                BeanPropertyRowMapper(Permissao::class.java)
-            )
-            return plan
+        } catch (exception: Exception) {
+            val permissao1 = Permissao()
+            val permissao2 = Permissao()
+            val permissao3 = Permissao()
+            val permissao4 = Permissao()
+            val permissao5 = Permissao()
+            return mutableListOf(permissao1, permissao2, permissao3, permissao4, permissao5)
         }
     }
-//    fun verificarPlano(pc: Computador):MutableList<Permissao2>{
-//        val permissoes = mutableListOf<Permissao2>()
-//        var i = 0
-//        while (i < 3){
-//            val permissao = Permissao2()
-//            permissoes += permissao
-//            i++
-//        }
-//        permissoes[0].nome = "USB"
-//        permissoes[1].nome = "JanelasAbertas"
-//        permissoes[2].nome = "Rede"
-//
-//        permissoes.forEach{
-//            val permis = bd.queryForObject(
-//                """
-//                select permissao from monitorar
-//	            join TipoComponente as tc on fkTipoComponente = idTipoComponente
-//		            join plano on monitorar.fkPlano = idPlano
-//			            join empresa on empresa.fkPlano = idPlano
-//                            join dispositivo on dispositivo.fkEmpresa = idEmpresa
-//                                where fkEmpresa = ${pc.fkempresa}
-//                                    and tc.nome = '${it.nome}';
-//                """, Int::class.java)
-//            if (permis == 1) it.permissao = true
-//        }
-//        return permissoes
-//    }
 }

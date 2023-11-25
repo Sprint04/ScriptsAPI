@@ -11,7 +11,6 @@ fun sistema(bd:Repositorio, looca: Looca, mac:String){
     val pc = comp[0]
     println("Credenciais verificadas, Iniciando programa!")
     Thread.sleep(2000)
-
     val user:List<Usuario> = bd.Usuarios(pc)
     val plano = bd.verificarPlano(pc)
 
@@ -108,13 +107,22 @@ fun sistema(bd:Repositorio, looca: Looca, mac:String){
                                 bd.monitoramento(dados, fks, pc)
                             }
                             if (aMonitorar.rede) {
+                                val rede = looca.rede.grupoDeInterfaces.interfaces
+
+                                dados = 0.0
+                                rede.forEach{
+                                    dados+= it.bytesRecebidos/1024
+                                }
                                 fks = 6
-                                dados = (looca.rede.grupoDeInterfaces.interfaces[1].bytesRecebidos / 1000000).toDouble()
-                                println("Estamos Recebendo: $dados Megabytes de rede")
+                                println("Estamos Recebendo: $dados Kilobytes de rede")
                                 bd.monitoramento(dados, fks, pc)
+
+                                dados = 0.0
+                                rede.forEach{
+                                    dados+= it.bytesEnviados/1024
+                                }
                                 fks = 7
-                                dados = (looca.rede.grupoDeInterfaces.interfaces[1].bytesEnviados / 1000000).toDouble()
-                                println("Estamos Enviando: $dados Megabytes de rede")
+                                println("Estamos Enviando: $dados Kilobytes de rede")
                                 bd.monitoramento(dados, fks, pc)
                             }
                             println("\n\r")

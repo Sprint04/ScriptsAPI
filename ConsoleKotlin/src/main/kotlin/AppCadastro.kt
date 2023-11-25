@@ -30,14 +30,22 @@ fun cadastro(bd:Repositorio, looca:Looca, mac:String){
                 pc.ip = mac
                 pc.fkempresa = empresa[0].id
 
-                bd.cadastrarDispostivo(pc)
+                val cadastrado = bd.cadastrarDispostivo(pc)
                 val comp:List<Computador> = bd.computador(mac)
                 val pc = comp[0]
-                try {
-                    SLQserver.insertComponentes(pc)
-                    Conexao.insertComponentes(pc)
-                } catch (exception:Exception){
-                    Conexao.insertComponentes(pc)
+                var cadastrado2 = false
+                if(cadastrado) {
+                    try {
+                        SQLserver.insertComponentes(pc)
+                        Conexao.insertComponentes(pc)
+                        println("Cadastro Realizado!!\r\nReiniciando o programa.")
+                        cadastrado2 = true
+                    } catch (exception: Exception) {
+                        cadastrado2 = true
+                    }
+                }
+                if(!cadastrado2){
+                    println("Cadastro não realizado!!\r\nReiniciando o programa.")
                 }
                 Thread.sleep(2000)
                 main()

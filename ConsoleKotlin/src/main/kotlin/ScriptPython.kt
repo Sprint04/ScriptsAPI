@@ -1,16 +1,14 @@
 import java.io.File
-import Conexao
-import SLQserver
 
 object ScriptPython {
 
     var PythonExe: List<Process> = listOf()
 
 
-    val host = SLQserver.serverName
-    val user = SLQserver.username
-    val passwd = SLQserver.password
-    val database = SLQserver.mydatabase
+    val host = SQLserver.serverName
+    val user = SQLserver.username
+    val passwd = SQLserver.password
+    val database = SQLserver.mydatabase
     val host2 = Conexao.serverName
     val user2 = Conexao.username
     val passwd2 = Conexao.password
