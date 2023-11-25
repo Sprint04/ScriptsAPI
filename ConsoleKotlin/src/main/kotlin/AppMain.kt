@@ -1,4 +1,5 @@
 import com.github.britooo.looca.api.core.Looca
+import kotlin.concurrent.thread
 
 fun main() {
     val bd = Repositorio()

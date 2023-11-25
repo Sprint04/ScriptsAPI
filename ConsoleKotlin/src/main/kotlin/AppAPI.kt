@@ -11,7 +11,7 @@ fun sistema(bd:Repositorio, looca: Looca, mac:String){
     val pc = comp[0]
     println("Credenciais verificadas, Iniciando programa!")
     Thread.sleep(2000)
-    val user:List<Usuario> = bd.Usuarios(pc)
+    val user:List<Usuario> = bd.usuarios(pc)
     val plano = bd.verificarPlano(pc)
 
 

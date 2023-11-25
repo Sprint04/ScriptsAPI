@@ -37,6 +37,8 @@ fun cadastro(bd:Repositorio, looca:Looca, mac:String){
                 if(cadastrado) {
                     try {
                         SQLserver.insertComponentes(pc)
+                        Conexao.criarTabelas()
+                        Thread.sleep(1000)
                         Conexao.insertComponentes(pc)
                         println("Cadastro Realizado!!\r\nReiniciando o programa.")
                         cadastrado2 = true

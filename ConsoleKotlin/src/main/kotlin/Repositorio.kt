@@ -38,16 +38,9 @@ class Repositorio {
             )
             return empresa
         }catch(exception:Exception) {
-            val empresa: List<Empresa> = bd.query(
-                """
-            select idEmpresa as id, empresa.nome, chaveAtivacao as token, limite, fkPlano from empresa
-                join tokens on fkToken = idToken
-                    join plano on fkPlano = idPlano
-                        where chaveAtivacao = '$token' 
-                        """,
-                BeanPropertyRowMapper(Empresa::class.java)
-            )
-            return empresa
+
+            val empresa = Empresa()
+            return mutableListOf(empresa)
         }
     }
     fun validacaoLimite(token:String):Int{
@@ -105,7 +98,7 @@ class Repositorio {
             return comp
         }
     }
-    fun Usuarios(pc: Computador):List<Usuario>{
+    fun usuarios(pc: Computador):List<Usuario>{
         try {
             val user: List<Usuario> = bd.query(
                 """
