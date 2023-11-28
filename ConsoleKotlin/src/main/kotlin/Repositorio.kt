@@ -160,7 +160,7 @@ class Repositorio {
     }
     fun verificarPlano(pc:Computador):List<Permissao>{
         try {
-            return bd.query(
+            return server.query(
                 """
             select tc.nome, permissao from monitorar
 	            join TipoComponente as tc on fkTipoComponente = idTipoComponente
