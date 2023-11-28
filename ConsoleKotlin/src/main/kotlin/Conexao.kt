@@ -2,7 +2,8 @@ import org.apache.commons.dbcp2.BasicDataSource
 import org.springframework.jdbc.core.JdbcTemplate
 
 object Conexao {
-    var serverName = "localhost"
+    var serverName = "172.17.0.2:3306"
+//    172.17.0.2:3306
     var mydatabase = "trackware"
     var username = "root"
     var password = "Trackware000"
@@ -45,14 +46,15 @@ object Conexao {
             foreign key (fkunidadeMedida) references unidadeMedida(idUnidadeMedida)
             );
     
-        insert into tipoComponente values
-            (null,'CPU','Um componente do escopo',1),
-            (null,'Memória','Um componente do escopo',1),
-            (null,'Disco','Um componente do escopo',1),
-            (null,'USB','Um componente do escopo', 4),
-            (null,'JanelasAbertas','Um componente do escopo',2),
-            (null,'Rede(recebida)','Um componente do escopo', 3),
-            (null,'Rede(enviada)','Um componente do escopo', 3);    
+        INSERT INTO tipoComponente (nome, descricao, fkUnidadeMedida) VALUES
+            ('CPU', 'Unidade Central de Processamento (CPU) responsável pelo processamento principal do sistema.', 1),
+            ('Memória', 'Memória de acesso aleatório (RAM) que armazena dados temporariamente para processamento.', 1),
+            ('Disco', 'Disco de armazenamento permanente (HDD/SSD) usado para armazenar dados permanentes no sistema.', 1),
+            ('USB', 'Porta de conexão universal utilizada para conectar dispositivos externos ao sistema.', 4),
+            ('JanelasAbertas', 'Quantidade de janelas de aplicativos abertas no sistema no momento da verificação.', 2),
+            ('Rede(recebida)', 'Dados recebidos pela interface de rede do dispositivo.', 3),
+            ('Rede(enviada)', 'Dados enviados pela interface de rede do dispositivo.', 3);
+          
         
         CREATE TABLE IF NOT EXIST dispositivo (
 	        idDispositivo INT PRIMARY KEY AUTO_INCREMENT,

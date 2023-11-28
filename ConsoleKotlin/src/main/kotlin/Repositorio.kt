@@ -11,16 +11,17 @@ class Repositorio {
     }
     fun validarDispositivo(ip: String): Boolean {
         return try {
-            val token: Token? = server.queryForObject(
+            val token: String? = server.queryForObject(
                 """
             SELECT chaveAtivacao AS token FROM dispositivo 
             JOIN empresa ON fkempresa = empresa.idEmpresa
             JOIN tokens ON fkToken = idToken
             WHERE ip = '$ip'
-            """,Token::class.java
+            """,String::class.java
             )
-            token != null
+            token!!.isNotBlank()
         } catch (exception: Exception) {
+            println("Erro ao validar dispositivo: ${exception.message}")
             false
         }
     }
@@ -100,7 +101,7 @@ class Repositorio {
     }
     fun usuarios(pc: Computador):List<Usuario>{
         try {
-            val user: List<Usuario> = bd.query(
+            val user: List<Usuario> = server.query(
                 """
             select idUsuario, u.nome, email_Corporativo as email, senha, c.nome as cargo from usuario as u
 	            join empresa on u.fkEmpresa = idEmpresa 
@@ -115,6 +116,7 @@ class Repositorio {
             val ADM = Usuario()
             ADM.email = "admuser000@permit.config"
             ADM.senha = "0000"
+            ADM.nome = "Administrador do Sistema"
             ADM.cargo = "Gerenciador de Sistema para login offline"
             ADM.idUsuario = 0
             return mutableListOf(ADM)
