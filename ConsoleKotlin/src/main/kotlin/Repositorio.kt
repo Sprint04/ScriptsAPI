@@ -21,8 +21,18 @@ class Repositorio {
             )
             token!!.isNotBlank()
         } catch (exception: Exception) {
-            println("Erro ao validar dispositivo: ${exception.message}")
-            false
+            println("Erro ao validar dispositivo no server: ${exception.message}")
+            try {
+                val token: String? = bd.queryForObject(
+                    """
+                SELECT IP FROM dispositivo WHERE ip = '$ip'
+                """, String::class.java
+                )
+                token!!.isNotBlank()
+            } catch (exception:Exception) {
+                println("Erro ao validar dispositivo no mysql também: ${exception.message}")
+                false
+            }
         }
     }
 
@@ -63,6 +73,7 @@ class Repositorio {
             ('${pc.sistemaOperacional}', '${pc.ip}', ${pc.fkempresa})
             """
             )
+            println(cadastro)
             bd.update(
                 """
             insert into dispositivo(sistema_Operacional,IP,fkEmpresa) values

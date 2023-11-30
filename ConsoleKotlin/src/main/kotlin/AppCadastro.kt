@@ -31,21 +31,22 @@ fun cadastro(bd:Repositorio, looca:Looca, mac:String){
                 pc.fkempresa = empresa[0].id
 
                 val cadastrado = bd.cadastrarDispostivo(pc)
+                println(cadastrado)
                 val comp:List<Computador> = bd.computador(mac)
                 val pc = comp[0]
                 var cadastrado2 = false
                 if(cadastrado) {
-                    try {
+                    cadastrado2 = try {
                         SQLserver.insertComponentes(pc)
                         Conexao.criarTabelas()
-                        Thread.sleep(1000)
                         Conexao.insertComponentes(pc)
                         println("Cadastro Realizado!!\r\nReiniciando o programa.")
-                        cadastrado2 = true
+                        true
                     } catch (exception: Exception) {
-                        cadastrado2 = true
+                        true
                     }
                 }
+                println(cadastrado2)
                 if(!cadastrado2){
                     println("Cadastro não realizado!!\r\nReiniciando o programa.")
                 }

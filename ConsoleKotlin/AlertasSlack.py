@@ -24,7 +24,7 @@ def read_query(query):
     except pymssql.Error as ex:
         print(f"Erro ao conectar ao banco de dados pymssql: {ex}")
         try:
-            connection = mysql_connection('localhost', 'testes', '12345678', 'trackware')
+            connection = mysql_connection('localhost', 'root', 'Trackware000', 'trackware')
             cursor = connection.cursor()
             cursor.execute(query)
             result = cursor.fetchall()
@@ -99,7 +99,7 @@ def enviar_email(corpo, componente):
     s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
 
 connection = mysql_connection('52.45.132.234', 'sa', '#Gfsptech', 'trackware')
-maquina = str(1)
+maquina = str(4)
 
 componentes = ['CPU', 'Disco', 'Memoria', 'USB', 'JanelasAbertas', 'Rede(recebida)', 'Rede(enviada)']
 alertas = {componente: False for componente in componentes}

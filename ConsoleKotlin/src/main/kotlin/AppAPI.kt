@@ -87,7 +87,7 @@ fun sistema(bd:Repositorio, looca: Looca, mac:String){
                     var dados: Double
                     println("\n\rEstamos monitorando sua máquina.\n\r")
                     val (arquivo1, arquivo2) = ScriptPython.criarPython(aMonitorar.python(), pc.idDispositivo, if(aMonitorar.CPU) "s" else "n", if(aMonitorar.memoria) "s" else "n", if(aMonitorar.disco) "s" else "n")
-                    ScriptPython.executarScript(arquivo1,arquivo2)
+                    ScriptPython.executarScript(arquivo1,arquivo2, pc)
                     Runtime.getRuntime().addShutdownHook(Thread {
                         println("O monitoramento foi finalizado")
                         ScriptPython.pararScript()

@@ -1,3 +1,4 @@
+import java.awt.Window
 import java.io.File
 
 object ScriptPython {
@@ -86,7 +87,7 @@ if(resposta == "S" or resposta == "s"):
 
         mem_used = psutil.virtual_memory()[2]
 
-        disk = psutil.disk_usage('C:\\')[3]
+        disk = psutil.disk_usage('/')[3]
 
         print("\n- CPU(%):",cpu, "\n- RAM(%):", mem_used, "\n- DISCO(%):", disk)
         
@@ -257,10 +258,16 @@ if(resposta == "S" or resposta == "s"):
 
         }
 
-        fun executarScript(arquivo1: String, arquivo2: String) {
-            val pythonProcess1 = Runtime.getRuntime().exec("py $arquivo1")
-            val pythonProcess2 = Runtime.getRuntime().exec("py $arquivo2")
-            PythonExe = listOf(pythonProcess1, pythonProcess2)
+        fun executarScript(arquivo1: String, arquivo2: String, pc:Computador) {
+            if(pc.sistemaOperacional.contains("Windows")){
+                val pythonProcess1 = Runtime.getRuntime().exec("py ScriptPython.py")
+                val pythonProcess2 = Runtime.getRuntime().exec("py AlertasSlack.py")
+                PythonExe = listOf(pythonProcess1, pythonProcess2)
+            } else {
+                val pythonProcess1 = Runtime.getRuntime().exec("python3 ScriptPython.py")
+                val pythonProcess2 = Runtime.getRuntime().exec("python3 AlertasSlack.py")
+                PythonExe = listOf(pythonProcess1, pythonProcess2)
+            }
         }
 
         fun pararScript() {

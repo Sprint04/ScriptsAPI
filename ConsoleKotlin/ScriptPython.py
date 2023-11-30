@@ -29,7 +29,7 @@ def monitoramento(dado, componente_janela, pc):
     except pymssql.Error as ex:
         print(f"Erro ao conectar ao banco de dados pymssql: {ex}")
         try:
-            connection = mysql_connection('localhost', 'testes', '12345678', 'trackware')
+            connection = mysql_connection('localhost', 'root', 'Trackware000', 'trackware')
             query = '''
                 INSERT INTO monitoramento(dadoCapturado, fkComponente, fkDispositivo) VALUES
                     (
@@ -43,7 +43,7 @@ def monitoramento(dado, componente_janela, pc):
 
 resposta = 's'
 if(resposta == "S" or resposta == "s"):
-    maquina = '1'
+    maquina = '4'
     cpuM = 's'
     memoriaM = 's'
     discoM = 's'
@@ -67,7 +67,7 @@ if(resposta == "S" or resposta == "s"):
 
         mem_used = psutil.virtual_memory()[2]
 
-        disk = psutil.disk_usage('C:\\')[3]
+        disk = psutil.disk_usage('/')[3]
 
         print("\n- CPU(%):",cpu, "\n- RAM(%):", mem_used, "\n- DISCO(%):", disk)
         

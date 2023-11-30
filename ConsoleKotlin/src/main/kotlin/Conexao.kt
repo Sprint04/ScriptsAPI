@@ -2,8 +2,7 @@ import org.apache.commons.dbcp2.BasicDataSource
 import org.springframework.jdbc.core.JdbcTemplate
 
 object Conexao {
-    var serverName = "172.17.0.2:3306"
-//    172.17.0.2:3306
+    var serverName = ""
     var mydatabase = "trackware"
     var username = "root"
     var password = "Trackware000"
@@ -24,26 +23,25 @@ object Conexao {
         }
     fun insertComponentes(pc:Computador){
         bd!!.execute("""
-            insert into componentes(fkTipoComponente,fkDispositivo,fkGatilhos) value
-	            (1, ${pc.idDispositivo}, 1),
-	            (2, ${pc.idDispositivo}, 2),
-	            (3, ${pc.idDispositivo}, 3),
-	            (4, ${pc.idDispositivo}, 4),
-	            (5, ${pc.idDispositivo}, 5),
-	            (6, ${pc.idDispositivo}, 6),
-	            (7, ${pc.idDispositivo}, 6);
+            insert into componentes(fkTipoComponente,fkDispositivo) values
+	            (1, ${pc.idDispositivo},),
+	            (2, ${pc.idDispositivo}),
+	            (3, ${pc.idDispositivo}),
+	            (4, ${pc.idDispositivo}),
+	            (5, ${pc.idDispositivo}),
+	            (6, ${pc.idDispositivo}),
+	            (7, ${pc.idDispositivo});
         """)
     }
     fun criarTabelas(){
 
 
         bd!!.execute("""
-        CREATE TABLE IF NOT EXIST tipoComponente(
+        CREATE TABLE IF NOT EXISTS tipoComponente(
 	        idTipoComponente int primary key auto_increment,
 	        nome varchar(45),
             descricao varchar(200),
-            fkUnidadeMedida int,
-            foreign key (fkunidadeMedida) references unidadeMedida(idUnidadeMedida)
+            fkUnidadeMedida int
             );
     
         INSERT INTO tipoComponente (nome, descricao, fkUnidadeMedida) VALUES
@@ -56,22 +54,22 @@ object Conexao {
             ('Rede(enviada)', 'Dados enviados pela interface de rede do dispositivo.', 3);
           
         
-        CREATE TABLE IF NOT EXIST dispositivo (
+        CREATE TABLE IF NOT EXISTS dispositivo (
 	        idDispositivo INT PRIMARY KEY AUTO_INCREMENT,
 	        sistema_Operacional VARCHAR (45),
             IP VARCHAR (50),
             fkEmpresa INT
         );
-        CREATE TABLE IF NOT EXIST componentes(
+        CREATE TABLE IF NOT EXISTS componentes(
         	idComponente INT PRIMARY KEY AUTO_INCREMENT,
             fkTipoComponente int,
             foreign key (fkTipoComponente) references tipoComponente(idTipoComponente),
             fkDispositivo int,
             foreign key (fkDispositivo) references dispositivo(idDispositivo),
-            capacidade float,
+            capacidade float
         );
 
-        CREATE TABLE IF NOT EXIST monitoramento(
+        CREATE TABLE IF NOT EXISTS monitoramento(
         	idDado INT PRIMARY KEY AUTO_INCREMENT,
             dadoCapturado FLOAT,
             dtHora DATETIME default current_timestamp,
