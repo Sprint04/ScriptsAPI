@@ -28,10 +28,11 @@ fun cadastro(bd:Repositorio, looca:Looca, mac:String){
                 pc.idDispositivo = qtd + 1
                 pc.sistemaOperacional = looca.sistema.sistemaOperacional
                 pc.ip = mac
+                println("Endereço mac obtido e sendo usado como identificador pessoal da maquina: ${pc.ip}")
                 pc.fkempresa = empresa[0].id
 
                 val cadastrado = bd.cadastrarDispostivo(pc)
-                println(cadastrado)
+                println(if(cadastrado)"Dispositivo Cadastrado no server" else "Falha ao cadastrar o dispositivo no server")
                 val comp:List<Computador> = bd.computador(mac)
                 val pc = comp[0]
                 var cadastrado2 = false
@@ -39,14 +40,16 @@ fun cadastro(bd:Repositorio, looca:Looca, mac:String){
                     cadastrado2 = try {
                         SQLserver.insertComponentes(pc)
                         Conexao.criarTabelas()
+                        bd.cadastrarDispostivoLocal(pc)
                         Conexao.insertComponentes(pc)
                         println("Cadastro Realizado!!\r\nReiniciando o programa.")
                         true
                     } catch (exception: Exception) {
+                        println(exception)
                         true
                     }
                 }
-                println(cadastrado2)
+                println(if(cadastrado2)"Tudo certo!!" else "Deu erro ao cadastrar o banco local.")
                 if(!cadastrado2){
                     println("Cadastro não realizado!!\r\nReiniciando o programa.")
                 }

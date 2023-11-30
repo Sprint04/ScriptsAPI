@@ -74,12 +74,6 @@ class Repositorio {
             """
             )
             println(cadastro)
-            bd.update(
-                """
-            insert into dispositivo(sistema_Operacional,IP,fkEmpresa) values
-            ('${pc.sistemaOperacional}', '${pc.ip}', ${pc.fkempresa})
-            """
-            )
             if (cadastro == 1) {
                 Thread.sleep(2500)
                 return true
@@ -89,6 +83,25 @@ class Repositorio {
         }
         return false
     }
+    fun cadastrarDispostivoLocal(pc:Computador):Boolean{
+        try {
+            val cadastro = bd.update(
+                """
+            insert into dispositivo(sistema_Operacional,IP,fkEmpresa) values
+            ('${pc.sistemaOperacional}', '${pc.ip}', ${pc.fkempresa})
+            """
+            )
+            println(cadastro)
+            if (cadastro == 1) {
+                Thread.sleep(2500)
+                return true
+            }
+        } catch (exception:Exception){
+           return false
+        }
+        return false
+    }
+
     fun computador(ip:String):List<Computador>{
         try {
             val comp: List<Computador> = server.query(
