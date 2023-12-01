@@ -35,7 +35,6 @@ class Sistema {
     |Nome de Usuário: $nome
     |Email: $email
     |Cargo: $cargo
-    |
     """.trimMargin())
     }
 

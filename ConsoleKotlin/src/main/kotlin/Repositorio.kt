@@ -69,11 +69,10 @@ class Repositorio {
         try {
             val cadastro = server.update(
                 """
-            insert into dispositivo(sistema_Operacional,IP,fkEmpresa) values
-            ('${pc.sistemaOperacional}', '${pc.ip}', ${pc.fkempresa})
+            insert into dispositivo(sistema_Operacional,IP,fkEmpresa, alias) values
+            ('${pc.sistemaOperacional}', '${pc.ip}', ${pc.fkempresa}, '${pc.alias}')
             """
             )
-            println(cadastro)
             if (cadastro == 1) {
                 Thread.sleep(2500)
                 return true
@@ -87,11 +86,10 @@ class Repositorio {
         try {
             val cadastro = bd.update(
                 """
-            insert into dispositivo(sistema_Operacional,IP,fkEmpresa) values
-            ('${pc.sistemaOperacional}', '${pc.ip}', ${pc.fkempresa})
+            insert into dispositivo(sistema_Operacional,IP,fkEmpresa, alias) values
+            ('${pc.sistemaOperacional}', '${pc.ip}', ${pc.fkempresa}, '${pc.alias}')
             """
             )
-            println(cadastro)
             if (cadastro == 1) {
                 Thread.sleep(2500)
                 return true

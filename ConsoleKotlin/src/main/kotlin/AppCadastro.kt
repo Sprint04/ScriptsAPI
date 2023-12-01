@@ -30,6 +30,8 @@ fun cadastro(bd:Repositorio, looca:Looca, mac:String){
                 pc.ip = mac
                 println("Endereço mac obtido e sendo usado como identificador pessoal da maquina: ${pc.ip}")
                 pc.fkempresa = empresa[0].id
+                println("Como esse computador será chamado?")
+                pc.alias = sn.next().toString()
 
                 val cadastrado = bd.cadastrarDispostivo(pc)
                 println(if(cadastrado)"Dispositivo Cadastrado no server" else "Falha ao cadastrar o dispositivo no server")

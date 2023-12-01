@@ -20,7 +20,7 @@ fun sistema(bd:Repositorio, looca: Looca, mac:String){
         println(
             """Oque deseja fazer?
         |1) Login
-        |2) Obter Informações do Usuário logado
+        |2) Obter Informações do Usuário logado e Máquina
         |3) Começar monitoramento
         |4) Exit
     """.trimMargin()
@@ -47,6 +47,7 @@ fun sistema(bd:Repositorio, looca: Looca, mac:String){
             2 -> {
                 if (sistema.login){
                     sistema.info()
+                    print("Logado no Computador: $mac / ${pc.alias}\n\r\n\r")
                 } else{
                     println("Por favor, faça login antes de pedir dados do usuário logado.")
                 }
@@ -86,7 +87,7 @@ fun sistema(bd:Repositorio, looca: Looca, mac:String){
                     var fks: Int
                     var dados: Double
                     println("\n\rEstamos monitorando sua máquina.\n\r")
-                    val (arquivo1, arquivo2) = ScriptPython.criarPython(aMonitorar.python(), pc.idDispositivo, if(aMonitorar.CPU) "s" else "n", if(aMonitorar.memoria) "s" else "n", if(aMonitorar.disco) "s" else "n")
+                    val (arquivo1, arquivo2) = ScriptPython.criarPython(aMonitorar.python(), pc.idDispositivo, if(aMonitorar.CPU) "s" else "n", if(aMonitorar.memoria) "s" else "n", if(aMonitorar.disco) "s" else "n", pc)
                     ScriptPython.executarScript(arquivo1,arquivo2, pc)
                     Runtime.getRuntime().addShutdownHook(Thread {
                         println("O monitoramento foi finalizado")
