@@ -14,3 +14,4 @@ Somos uma empresa de monitoramento de hardwares em tempo real e possuímos como 
 
 ⨠ Aumento de assertividade em tomadas de decisões.
 
+⨠ OBS: O Arquivo aqui do git não envia mensagens para o slack, pois o hook que o slack cria é reservado e se subir ele no git ele é bloqueado e encerrado.
