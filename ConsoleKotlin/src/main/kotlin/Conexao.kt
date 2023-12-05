@@ -61,7 +61,8 @@ object Conexao {
 	        idDispositivo INT PRIMARY KEY AUTO_INCREMENT,
 	        sistema_Operacional VARCHAR (45),
             IP VARCHAR (50),
-            fkEmpresa INT
+            fkEmpresa INT,
+	    alias varchar(50)
         )
             """.trimIndent())
             bd!!.execute("""
